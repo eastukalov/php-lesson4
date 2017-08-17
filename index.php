@@ -73,8 +73,8 @@
 	echo '<p>Температура min: ' . celsius($array['main']['temp_min']) . '</p>';
 	echo '<p>Температура max: ' . celsius($array['main']['temp_max']) . '</p>';
 	echo '<p>Давление: ' . pressure($array['main']['pressure']) . '</p>';;
-	echo '<p>Влажность: ' . pressure($array['main']['humidity']) . ' %' . '</p>';;
-	echo '<p>Скорость ветра: ' . pressure($array['wind']['speed']) . ' м/с' . '</p>';;
+	echo '<p>Влажность: ' . $array['main']['humidity'] . ' %' . '</p>';;
+	echo '<p>Скорость ветра: ' . $array['wind']['speed'] . ' м/с' . '</p>';;
 	echo '<p>Ветер: ' . wind($array['wind']['deg']);
 	echo '<p>Облачность: ' . $array['clouds']['all'] . ' %' . '</p>';;
 	date_default_timezone_set('UTC');
