@@ -1,7 +1,7 @@
 <?php
 	function celsius ($arg)
 	{
-		return ($arg-273.15) . '&#176C';
+		return ($arg-273.15) . ' &#176C';
 	}
     
 	function pressure ($arg)
@@ -62,26 +62,76 @@
 				break;				
 		}
 	}
+    
+  date_default_timezone_set('UTC');
+	$filename_local='cache.txt';
+	$city_id=498817;
+	$user_id='2e1da782eed5f92f3cf8970c7daff111';
+	$filename_external="http://api.openweathermap.org/data/2.5/weather?id=$city_id&APPID=$user_id";
 
-	$filename='http://api.openweathermap.org/data/2.5/weather?id=498817&APPID=2e1da782eed5f92f3cf8970c7daff111';
+	$filename=$filename_external;
+
+	if (is_readable($filename_local)) {
+			
+		if (((time()-filemtime($filename_local))/60)<=60) {
+			$filename=$filename_local;
+		}
+	}
+
 	$json=file_get_contents($filename);
-	// file_put_contents('json.txt', $json);
-	// $array=json_decode(file_get_contents('json.txt'),true);
+
+	if ($filename==$filename_external) {
+		file_put_contents($filename_local, $json);
+	}
+	
 	$array=json_decode($json,true);
-	echo '<h1>Погода в : ' . $array['name'] . '</h1>';
-	echo '<p>Температура: ' . celsius($array['main']['temp']) . '</p>';
-	echo '<p>Температура min: ' . celsius($array['main']['temp_min']) . '</p>';
-	echo '<p>Температура max: ' . celsius($array['main']['temp_max']) . '</p>';
-	echo '<p>Давление: ' . pressure($array['main']['pressure']) . '</p>';;
-	echo '<p>Влажность: ' . $array['main']['humidity'] . ' %' . '</p>';;
-	echo '<p>Скорость ветра: ' . $array['wind']['speed'] . ' м/с' . '</p>';;
-	echo '<p>Ветер: ' . wind($array['wind']['deg']);
-	echo '<p>Облачность: ' . $array['clouds']['all'] . ' %' . '</p>';;
-	date_default_timezone_set('UTC');
 	$time = $array['dt'];
 	$time += 3 * 3600;
-	echo '<p>Дата / время: ' . date('d.m.Y H:i:s',$time) . '</p>';;
-	// echo "<pre>";
-	// print_r($array);
-	// echo "</pre>";
 ?>
+
+<style type="text/css">
+	td {
+		padding-right: 30px;
+	}
+</style>
+
+<h1><?='Погода в : ' . $array['name']?></h1>
+
+<table>
+	<tr>
+		<td>Температура</td>
+		<td><?=celsius($array['main']['temp'])?></td>
+	</tr>
+	<tr>
+		<td>Температура min</td>
+		<td><?=celsius($array['main']['temp_min'])?></td>
+	</tr>
+	<tr>
+		<td>Температура max</td>
+		<td><?=celsius($array['main']['temp_max'])?></td>
+	</tr>
+	<tr>
+		<td>Давление</td>
+		<td><?=pressure($array['main']['pressure'])?></td>
+	</tr>
+	<tr>
+		<td>Влажность</td>
+		<td><?=$array['main']['humidity'] . ' %'?></a></td>
+	</tr>
+	<tr>
+		<td>Скорость ветра</td>
+		<td><?=$array['wind']['speed'] . ' м/с'?></td>
+	</tr>
+	<tr>
+		<td>Ветер</td>
+		<td><?=wind($array['wind']['deg'])?></td>
+	</tr>
+	<tr>
+		<td>Облачность</td>
+		<td><?=$array['clouds']['all'] . ' %'?></td>
+	</tr>
+	<tr>
+		<td>Дата / время</td>
+		<td><?=date('d.m.Y H:i:s',$time)?></td>
+	</tr>
+</table>
